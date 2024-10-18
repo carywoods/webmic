@@ -37,7 +37,7 @@ app.post('/send-email', (req, res) => {
   // Email options
   const msg = {
     to: userEmail, // Recipient's email
-    from: 'your-verified-email@domain.com', // Verified sender email from SendGrid
+    from: 'hcwoods@pike.k12.in.us', // Verified sender email from SendGrid
     subject: 'Webmic Test Results',
     text: `Here are the results of your device test:\n\nWebcam Status: ${webcamStatus}\nMicrophone Status: ${micStatus}`,
     html: `<strong>Here are the results of your device test:</strong><br><br>Webcam Status: ${webcamStatus}<br>Microphone Status: ${micStatus}`
