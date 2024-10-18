@@ -29,15 +29,21 @@ app.post('/send-email', (req, res) => {
   console.log('Received POST request at /send-email');
   console.log('Request Body:', req.body);
 
+  if (!userEmail || !webcamStatus || !micStatus) {
+    console.error('Missing required fields in request body');
+    return res.status(400).send('Missing required fields in request body');
+  }
+
   // Email options
   const msg = {
     to: userEmail, // Recipient's email
-    from: 'hcwoods@pike.k12.in.us', // Verified sender email from SendGrid
+    from: 'your-verified-email@domain.com', // Verified sender email from SendGrid
     subject: 'Webmic Test Results',
     text: `Here are the results of your device test:\n\nWebcam Status: ${webcamStatus}\nMicrophone Status: ${micStatus}`,
     html: `<strong>Here are the results of your device test:</strong><br><br>Webcam Status: ${webcamStatus}<br>Microphone Status: ${micStatus}`
   };
 
+  console.log('Attempting to send email with SendGrid');
   sgMail
     .send(msg)
     .then(() => {
