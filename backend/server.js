@@ -14,8 +14,8 @@ app.use(express.json()); // Parse JSON bodies
 // Set up SendGrid API key from environment variable
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
-// Define the port (use the value from environment variables or default to 5000)
-const PORT = process.env.PORT || 5000;
+// Define the port (use the value from environment variables or default to 10000)
+const PORT = process.env.PORT || 10000;
 
 // Define the root route
 app.get('/', (req, res) => {
@@ -26,15 +26,18 @@ app.get('/', (req, res) => {
 app.post('/send-email', (req, res) => {
   const { userEmail, webcamStatus, micStatus } = req.body;
 
+  console.log('Received POST request at /send-email');
+  console.log('Request Body:', req.body);
+
   // Email options
   const msg = {
-    to: [userEmail, 'your-email@gmail.com'],
-    from: 'your-email@gmail.com', // Verified SendGrid sender
+    to: userEmail, // Recipient's email
+    from: 'hcwoods@pike.k12.in.us', // Verified sender email from SendGrid
     subject: 'Webmic Test Results',
-    text: `Here are the results of your device test:\n\nWebcam Status: ${webcamStatus}\nMicrophone Status: ${micStatus}`
+    text: `Here are the results of your device test:\n\nWebcam Status: ${webcamStatus}\nMicrophone Status: ${micStatus}`,
+    html: `<strong>Here are the results of your device test:</strong><br><br>Webcam Status: ${webcamStatus}<br>Microphone Status: ${micStatus}`
   };
 
-  // Send email
   sgMail
     .send(msg)
     .then(() => {
