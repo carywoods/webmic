@@ -48,7 +48,11 @@ function App() {
       })
       .catch(error => {
         console.error('Error sending email:', error);
-        alert('Failed to send email');
+        if (error.response && error.response.data) {
+          alert(`Failed to send email: ${error.response.data}`);
+        } else {
+          alert('Failed to send email: An unexpected error occurred');
+        }
       });
   };
 
