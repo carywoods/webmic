@@ -1,29 +1,48 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import axios from 'axios';
+import './App.css';
 
 function App() {
+  const videoRef = useRef(null);
   const [webcamStatus, setWebcamStatus] = useState('Not Tested');
   const [micStatus, setMicStatus] = useState('Not Tested');
   const [userEmail, setUserEmail] = useState('');
 
-  const handleTestWebcam = () => {
-    // Placeholder for webcam testing logic
-    setWebcamStatus('Webcam working');
-  };
+  useEffect(() => {
+    // Request access to the user's webcam
+    async function startVideo() {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        if (videoRef.current) {
+          videoRef.current.srcObject = stream;
+        }
+        setWebcamStatus('Webcam working');
+      } catch (error) {
+        console.error('Error accessing webcam:', error);
+        setWebcamStatus('Webcam test failed: ' + error.message);
+      }
+    }
+    startVideo();
+  }, []);
 
-  const handleTestMicrophone = () => {
-    // Placeholder for microphone testing logic
-    setMicStatus('Microphone working');
+  const handleTestMicrophone = async () => {
+    try {
+      await navigator.mediaDevices.getUserMedia({ audio: true });
+      setMicStatus('Microphone working');
+    } catch (error) {
+      console.error('Error accessing microphone:', error);
+      setMicStatus('Microphone test failed: ' + error.message);
+    }
   };
 
   const handleSendResults = () => {
     const data = {
       userEmail,
       webcamStatus,
-      micStatus
+      micStatus,
     };
 
-    axios.post('http://localhost:5000/send-email', data)
+    axios.post('https://webmic.onrender.com/send-email', data)
       .then(response => {
         alert('Email sent successfully!');
       })
@@ -37,8 +56,10 @@ function App() {
     <div className="App">
       <header className="App-header">
         <h1>Webmic Frontend</h1>
-        <button onClick={handleTestWebcam}>Test Webcam</button>
-        <p>Webcam Status: {webcamStatus}</p>
+        <div>
+          <video ref={videoRef} autoPlay playsInline style={{ width: '400px', height: '300px' }} />
+          <p>Webcam Status: {webcamStatus}</p>
+        </div>
         <button onClick={handleTestMicrophone}>Test Microphone</button>
         <p>Microphone Status: {micStatus}</p>
         <input
