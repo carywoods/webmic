@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './App.css';
 
@@ -6,6 +6,18 @@ function App() {
   const [userEmail, setUserEmail] = useState('');
   const [webcamStatus, setWebcamStatus] = useState('Not Tested');
   const [micStatus, setMicStatus] = useState('Not Tested');
+
+  useEffect(() => {
+    const testConnection = async () => {
+      try {
+        const response = await axios.get('https://webmic.onrender.com/');
+        console.log('Test Connection Successful:', response.data);
+      } catch (error) {
+        console.error('Error testing connection:', error);
+      }
+    };
+    testConnection();
+  }, []);
 
   const handleSendResults = async () => {
     const data = {
