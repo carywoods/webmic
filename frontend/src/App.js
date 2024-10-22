@@ -38,9 +38,9 @@ function App() {
   };
 
   return (
-    <div className="App">
+    <div className="App" style={{ backgroundColor: '#f0f8ff' }}>
       <header className="App-header">
-        <h1>Webmic Frontend</h1>
+        <h1>Webmic Frontend - Version with Fresh Color</h1>
         <input
           type="email"
           placeholder="Enter your email"
