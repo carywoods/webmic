@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Webmic Test Form</title>
+</head>
+<body>
+    <h1>Webmic Test Form</h1>
+    <form id="webmicForm">
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="userEmail" placeholder="Enter your email" required>
+        <br><br>
+        <input type="hidden" name="webcamStatus" value="Webcam working">
+        <input type="hidden" name="micStatus" value="Microphone working">
+        <button type="submit">Send Test Results</button>
+    </form>
+
+    <script>
+        document.getElementById('webmicForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+
+            const formData = new FormData(event.target);
+            const data = {
+                userEmail: formData.get('userEmail'),
+                webcamStatus: formData.get('webcamStatus'),
+                micStatus: formData.get('micStatus')
+            };
+
+            try {
+                const response = await fetch('https://webmic.onrender.com/send-email', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(`Failed to send email: ${errorData}`);
+                }
+
+                alert('Email sent successfully!');
+            } catch (error) {
+                console.error('Error sending email:', error);
+                alert(`Failed to send email: ${error.message}`);
+            }
+        });
+    </script>
+</body>
+</html>
