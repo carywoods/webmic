@@ -36,14 +36,22 @@ function App() {
   };
 
   const handleSendResults = () => {
+    console.log('Send button clicked');
     const data = {
       userEmail,
       webcamStatus,
       micStatus,
     };
 
-    axios.post('https://webmic.onrender.com/send-email', data)
+    console.log('Sending data to backend:', data);
+    
+    axios.post('https://webmic.onrender.com/send-email', data, {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
       .then(response => {
+        console.log('Backend response:', response);
         alert('Email sent successfully!');
       })
       .catch(error => {
