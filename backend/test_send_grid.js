@@ -1,20 +1,33 @@
-// using Twilio SendGrid's v3 Node.js Library
-// https://github.com/sendgrid/sendgrid-nodejs
-// javascript
-const sgMail = require('@sendgrid/mail')
-sgMail.setApiKey(process.env.SENDGRID_API_KEY)
-const msg = {
-  to: 'user@email.com', // Change to your recipient
-  from: 'user2@email.com', // Change to your verified sender
-  subject: 'Sending with SendGrid is Fun',
-  text: 'and easy to do anywhere, even with Node.js',
-  html: '<strong>and easy to do anywhere, even with Node.js</strong>',
-}
-sgMail
-  .send(msg)
-  .then(() => {
-    console.log('Email sent')
-  })
-  .catch((error) => {
-    console.error(error)
-  })
+// Import required modules
+const axios = require('axios');
+
+// JavaScript version of the cURL test
+const sendTestEmail = async () => {
+  const data = {
+    userEmail: 'twginc@gmail.com',
+    webcamStatus: 'Webcam working',
+    micStatus: 'Microphone working'
+  };
+
+  try {
+    const response = await axios.post('https://webmic.onrender.com/send-email', data, {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+    console.log('Email sent successfully:', response.data);
+  } catch (error) {
+    console.error('Error sending email:', error);
+    if (error.response) {
+      console.error('Error response from server:', error.response.data);
+    } else if (error.request) {
+      console.error('No response received from server:', error.request);
+    } else {
+      console.error('Error setting up the request:', error.message);
+    }
+  }
+};
+
+// Call the function to test the email sending
+sendTestEmail();
+

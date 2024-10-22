@@ -1,79 +1,46 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
 import './App.css';
 
 function App() {
-  const videoRef = useRef(null);
+  const [userEmail, setUserEmail] = useState('');
   const [webcamStatus, setWebcamStatus] = useState('Not Tested');
   const [micStatus, setMicStatus] = useState('Not Tested');
-  const [userEmail, setUserEmail] = useState('');
 
-  useEffect(() => {
-    // Request access to the user's webcam
-    async function startVideo() {
-      try {
-        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-        if (videoRef.current) {
-          videoRef.current.srcObject = stream;
-        }
-        setWebcamStatus('Webcam working');
-      } catch (error) {
-        console.error('Error accessing webcam:', error);
-        setWebcamStatus('Webcam test failed: ' + error.message);
-      }
-    }
-    startVideo();
-  }, []);
-
-  const handleTestMicrophone = async () => {
-    try {
-      await navigator.mediaDevices.getUserMedia({ audio: true });
-      setMicStatus('Microphone working');
-    } catch (error) {
-      console.error('Error accessing microphone:', error);
-      setMicStatus('Microphone test failed: ' + error.message);
-    }
-  };
-
-  const handleSendResults = () => {
-    console.log('Send button clicked');
+  const handleSendResults = async () => {
     const data = {
       userEmail,
-      webcamStatus,
-      micStatus,
+      webcamStatus: 'Webcam working',
+      micStatus: 'Microphone working'
     };
 
-    console.log('Sending data to backend:', data);
-    
-    axios.post('https://webmic.onrender.com/send-email', data, {
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    })
-      .then(response => {
-        console.log('Backend response:', response);
-        alert('Email sent successfully!');
-      })
-      .catch(error => {
-        console.error('Error sending email:', error);
-        if (error.response && error.response.data) {
-          alert(`Failed to send email: ${error.response.data}`);
-        } else {
-          alert('Failed to send email: An unexpected error occurred');
+    try {
+      const response = await axios.post('https://webmic.onrender.com/send-email', data, {
+        headers: {
+          'Content-Type': 'application/json'
         }
       });
+      console.log('Email sent successfully:', response.data);
+      alert('Email sent successfully!');
+    } catch (error) {
+      console.error('Error sending email:', error);
+      if (error.response) {
+        console.error('Error response from server:', error.response.data);
+        alert(`Failed to send email: ${error.response.data}`);
+      } else if (error.request) {
+        console.error('No response received from server:', error.request);
+        alert('Failed to send email: No response received from server');
+      } else {
+        console.error('Error setting up the request:', error.message);
+        alert('Failed to send email: An unexpected error occurred');
+      }
+    }
   };
 
   return (
     <div className="App">
       <header className="App-header">
         <h1>Webmic Frontend</h1>
-        <div>
-          <video ref={videoRef} autoPlay playsInline style={{ width: '400px', height: '300px' }} />
-          <p>Webcam Status: {webcamStatus}</p>
-        </div>
-        <button onClick={handleTestMicrophone}>Test Microphone</button>
-        <p>Microphone Status: {micStatus}</p>
         <input
           type="email"
           placeholder="Enter your email"
